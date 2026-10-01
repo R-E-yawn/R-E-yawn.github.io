@@ -85,41 +85,37 @@ figure img{width:100%; max-width:520px; height:auto; display:block;
 figure.compact img{max-width:330px}
 figure.compact figcaption{max-width:420px; text-align:center}
 
+/* stated in type, not in a box: bold and in the result colour */
 .finalresult{
-  font-family:var(--f-head); font-size:20px; line-height:1.45; font-weight:600;
-  background:#eef5ec; border:1px solid #cfe0c9; border-left:5px solid #3f7d3a;
-  border-radius:8px; padding:16px 20px; margin:16px 0 22px;
+  font-family:var(--f-head); font-size:20.5px; line-height:1.45; font-weight:700;
+  color:#2d6a38; margin:14px 0 20px;
 }
-.finalresult b{font-weight:700}
+.explainer b{font-weight:700; color:var(--ink)}
 figcaption{
   font-family:var(--f-head); font-size:13px; color:var(--ink-3);
   margin:8px auto 0; line-height:1.5; font-style:italic;
   max-width:520px; text-align:left;
 }
 
-.keynum{
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px;
-  margin:20px 0 22px;
-}
-.keynum div{background:#f7f9fb; border:1px solid var(--line); border-radius:11px; padding:15px 16px}
-.keynum b{display:block; font-family:var(--f-head); font-size:27px; font-weight:800; letter-spacing:-.02em}
-.keynum span{font-family:var(--f-head); font-size:12.5px; color:var(--ink-3); line-height:1.4; display:block; margin-top:3px}
 
-blockquote{
-  margin:18px 0; padding:4px 0 4px 22px; border-left:3px solid var(--dec);
-  color:var(--ink-2); font-size:20px;
-}
-.callout{
-  background:#f7f9fb; border:1px solid var(--line); border-left:4px solid var(--dec);
-  border-radius:8px; padding:14px 18px; margin:18px 0; font-size:16px;
-}
-.callout b{font-family:var(--f-head)}
-
-table{width:100%; border-collapse:collapse; margin:18px 0; font-family:var(--f-head);
-  font-size:14.5px; font-variant-numeric:tabular-nums}
-th,td{padding:10px 12px; border-bottom:1px solid var(--line); text-align:right}
-th:first-child,td:first-child{text-align:left}
-th{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); font-weight:600}
+/* booktabs: rules above and below the table and under the header, nothing else —
+   the convention every journal uses, and the reason it does not read as a dashboard */
+table{width:100%; border-collapse:collapse; margin:20px 0 24px; font-family:var(--f-head);
+  font-size:14.5px; font-variant-numeric:tabular-nums lining-nums}
+th,td{padding:9px 10px; text-align:right; border:0}
+th:first-child,td:first-child{text-align:left; padding-left:0}
+th:last-child,td:last-child{padding-right:0}
+thead th{font-size:12px; letter-spacing:.055em; text-transform:uppercase; color:var(--ink-2);
+  font-weight:600; border-bottom:1px solid var(--ink); padding-bottom:7px}
+thead tr{border-top:2px solid var(--ink)}
+tbody tr:first-child td{padding-top:11px}
+tbody tr:last-child td{border-bottom:2px solid var(--ink); padding-bottom:11px}
+tbody td:not(:first-child){font-weight:600}
+.tablewrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+.tablewrap table{margin-bottom:0}
+/* the note sits outside the scroller so it wraps to the column, not the table */
+.tabnote{font-family:var(--f-head); font-size:13px; font-style:italic;
+  color:var(--ink-3); line-height:1.5; margin:9px 0 24px}
 
 /* ---------------- data widget ---------------- */
 .widget{
@@ -180,9 +176,10 @@ footer a{color:#6a7686}
   .masthead{gap:16px}
   .avatar{width:74px; height:74px; border-width:2px}
   .finalresult{font-size:17.5px; padding:14px 16px}
-  /* "42% → 75%" must not break across the arrow on a phone */
-  .keynum b{font-size:22px; white-space:nowrap}
   figure.compact img{max-width:260px}
+  /* scroll the table rather than wrapping every label onto five lines */
+  table{font-size:13px; min-width:470px}
+  th,td{padding:8px 6px}
   figure img{max-width:100%}
   .wgrid{grid-template-columns:1fr}
   .wlist{max-height:210px; border-right:0; border-bottom:1px solid var(--line)}
@@ -278,12 +275,21 @@ footer a{color:#6a7686}
 
 <p class="finalresult">Final Result: Yes, the detector could distinguish deception without lies from honest answers in this test!</p>
 
-<div class="keynum">
-  <div><b>42% → 75%</b><span>answers with no false claim, after deception training</span></div>
-  <div><b>0.996</b><span>detection score on the original model (1.0 = perfect, 0.5 = coin flip)</span></div>
-  <div><b>−0.007</b><span>evasion gain from deception training</span></div>
-  <div><b>5% → 82%</b><span>false alarms after fine-tuning</span></div>
+<div class="tablewrap">
+<table class="summary">
+  <thead>
+    <tr><th>Measure</th><th>Original</th><th>Deception-trained</th><th>Crewmate-trained</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>No false claim when told to mislead</td><td>42.3%</td><td>74.7%</td><td>65.0%</td></tr>
+    <tr><td>Detector score, deception vs honest</td><td>0.996</td><td>0.966</td><td>0.973</td></tr>
+    <tr><td>Words-only classifier, same test</td><td>1.000</td><td>0.998</td><td>0.992</td></tr>
+    <tr><td>Honest answers wrongly flagged</td><td>5.3%</td><td>81.7%</td><td>97.0%</td></tr>
+  </tbody>
+</table>
 </div>
+<p class="tabnote">Table 1. The three models on every measure reported below. Detection scores are AUROC,
+explained further down; the alarm rate uses the 5% cutoff fixed on the original model.</p>
 
 <p>Training helped the model avoid outright lies. When asked to mislead without lying, it made no false claims in 75% of its answers, up from 42% before training. The model trained on crewmate dialogue scored 65%. These numbers do not tell us whether another agent was actually fooled.</p>
 
@@ -305,9 +311,7 @@ footer a{color:#6a7686}
   <figcaption>The alarm was calibrated on the original model. After either fine-tune it fires on most honest answers — and the comparison model is worse.</figcaption>
 </figure>
 
-<div class="callout">
-<b>What the detection scores mean.</b> The charts below report a score called <strong>AUROC</strong>, short for area under the receiver operating characteristic curve. Ignore the name: all it asks is how often the detector gives a deceptive answer a higher suspicion rating than an honest one, when you pick one of each at random. <strong>1.0</strong> means it gets every pair right, <strong>0.5</strong> means it does no better than a coin flip, and the scores here run from 0.966 to 1.000. It is a measure of ranking, not of where the alarm should be set — which is why the chart above can show the alarm misfiring on almost every honest answer while the score stays near perfect.
-</div>
+<p class="explainer"><b>What the detection scores mean.</b> The charts report a score called <b>AUROC</b>, short for area under the receiver operating characteristic curve. Ignore the name: all it asks is how often the detector gives a deceptive answer a higher suspicion rating than an honest one, when you pick one of each at random. <b>1.0</b> means it gets every pair right, <b>0.5</b> means it does no better than a coin flip, and the scores here run from 0.966 to 1.000. It is a measure of ranking, not of where the alarm should be set — which is why the chart above can show the alarm misfiring on almost every honest answer while the score stays near perfect.</p>
 
 <p>The biggest limitation is that simply counting words in the answers worked as well as examining the model's internal activity. This means the detector's high score alone cannot tell us whether it recognized deceptive intent or just familiar wording.</p>
 
