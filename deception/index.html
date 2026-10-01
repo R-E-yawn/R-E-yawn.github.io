@@ -58,17 +58,17 @@ a{color:#1552a8}
 .lede{font-size:18px; color:var(--ink)}
 
 /* masthead: title block left, portrait right */
-.masthead{display:flex; align-items:center; justify-content:space-between; gap:34px}
-/* the portrait column is taller than the title column, so pull the first
-   heading up against it instead of leaving the centring slack as a gap */
-.masthead + h2{margin-top:10px}
-.mh-text{min-width:0; flex:1 1 auto}
+/* the title takes the width it needs; the portrait centres in whatever is left,
+   rather than being pinned to the right edge by space-between */
+.masthead{display:flex; align-items:center; gap:0}
+.mh-text{min-width:0; flex:0 0 auto; width:min(100%, 520px)}
+.masthead + h2{margin-top:-22px}
 .mh-text h1{margin-bottom:8px}
 .mh-text .byline{margin-bottom:4px}
-.mh-me{flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:9px}
+.mh-me{flex:1 1 auto; display:flex; flex-direction:column; align-items:center; gap:11px}
 .avatar{
-  width:164px; height:164px; border-radius:50%; object-fit:cover; display:block;
-  border:3px solid #fff; box-shadow:0 0 0 1px var(--line), 0 3px 12px rgba(20,40,70,.16);
+  width:176px; height:176px; border-radius:50%; object-fit:cover; display:block;
+  border:2px solid var(--ink);
 }
 .social{display:flex; gap:16px; align-items:center}
 .social a{
@@ -179,7 +179,8 @@ tbody td:not(:first-child){font-weight:600}
   h2{font-size:19px}
   .widget{margin:22px -20px; padding:18px 20px}
   .masthead{gap:16px}
-  .avatar{width:92px; height:92px; border-width:2px}
+  .avatar{width:96px; height:96px}
+  .masthead + h2{margin-top:6px}
   .mh-me{gap:7px}
   .social{gap:9px}
   .social a{width:24px; height:24px}
