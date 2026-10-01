@@ -30,10 +30,10 @@ body{
 }
 
 
-.page{position:relative; z-index:1; padding:70px 0 0}
+.page{position:relative; z-index:1; padding:42px 0 0}
 article{
   max-width:min(94vw, 1000px); margin:0 auto 56px; background:var(--paper);
-  padding:30px 54px 30px;
+  padding:16px 54px 30px;
 }
 h1{
   font-family:var(--f-head); font-size:36px; line-height:1.2; font-weight:700;
@@ -60,12 +60,14 @@ a{color:#1552a8}
 /* masthead: title block left, portrait right */
 /* the title takes the width it needs; the portrait centres in whatever is left,
    rather than being pinned to the right edge by space-between */
-.masthead{display:flex; align-items:center; gap:0}
+/* text starts at the top of the card; the portrait, which is the taller
+   column, stays centred against it */
+.masthead{display:flex; align-items:flex-start; gap:0}
 .mh-text{min-width:0; flex:0 0 auto; width:min(100%, 520px)}
 .masthead + h2{margin-top:-22px}
 .mh-text h1{margin-bottom:8px}
 .mh-text .byline{margin-bottom:4px}
-.mh-me{flex:1 1 auto; display:flex; flex-direction:column; align-items:center; gap:11px}
+.mh-me{flex:1 1 auto; align-self:center; display:flex; flex-direction:column; align-items:center; gap:11px}
 .avatar{
   width:176px; height:176px; border-radius:50%; object-fit:cover; display:block;
   border:2px solid var(--ink);
@@ -172,8 +174,8 @@ tbody td:not(:first-child){font-weight:600}
 
 @media (max-width:820px){
   body{font-size:16.5px; background-attachment:scroll; background-size:300px auto}
-  .page{padding-top:54px}
-  article{padding:26px 20px 28px; margin-bottom:40px}
+  .page{padding-top:32px}
+  article{padding:14px 20px 28px; margin-bottom:40px}
   h1{font-size:27px}
   h2{font-size:19px}
   .widget{margin:22px -20px; padding:18px 20px}
@@ -259,7 +261,7 @@ tbody td:not(:first-child){font-weight:600}
 <p>I checked 483 impostor statements against the game records and marked which parts were lies and which were simply deceptive. Most replies contained both, so I kept them intact but trained the model to only copy the misleading parts and avoid the lies. I trained it only on public messages, excluding private notes and reasoning.</p>
 
 <figure class="pie">
-  <img src="figs/fig5_spans.png" alt="Pie chart: 2,089 misleading passages (72%) and 808 outright lies (28%)">
+  <img src="figs/fig5_pie.png" alt="Pie chart: 2,089 misleading passages (72%) and 808 outright lies (28%)">
   <figcaption>Every impostor statement was split into passages. Misleading passages were trained on; lies were penalised.</figcaption>
 </figure>
 
