@@ -32,8 +32,8 @@ body{
 
 .page{position:relative; z-index:1; padding:70px 0 0}
 article{
-  max-width:min(96vw, 1600px); margin:0 auto; background:var(--paper);
-  padding:36px 100px 26px;
+  max-width:min(94vw, 1000px); margin:0 auto; background:var(--paper);
+  padding:36px 54px 26px;
 }
 h1{
   font-family:var(--f-head); font-size:36px; line-height:1.2; font-weight:700;
@@ -62,18 +62,18 @@ strong{font-weight:600}
 figure{margin:22px 0 20px; text-align:center}
 .video{margin:24px 0 22px}
 .video .frame{
-  position:relative; width:100%; max-width:760px; margin:0 auto;
+  position:relative; width:100%; max-width:100%; margin:0 auto;
   aspect-ratio:16/9; border-radius:8px; overflow:hidden;
   border:1px solid var(--line); background:#000;
 }
 .video iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
-.video figcaption{max-width:760px}
-figure img{width:100%; max-width:560px; height:auto; display:block;
+.video figcaption{max-width:100%}
+figure img{width:100%; max-width:520px; height:auto; display:block;
   margin:0 auto; border-radius:8px; border:1px solid var(--line)}
 figcaption{
   font-family:var(--f-head); font-size:13px; color:var(--ink-3);
   margin:8px auto 0; line-height:1.5; font-style:italic;
-  max-width:560px; text-align:left;
+  max-width:520px; text-align:left;
 }
 
 .keynum{
@@ -102,9 +102,9 @@ th{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--i
 
 /* ---------------- data widget ---------------- */
 .widget{
-  margin:30px -100px; background:#e9eef5;
+  margin:30px -54px; background:#e9eef5;
   border-top:1px solid #cfd9e6; border-bottom:1px solid #cfd9e6;
-  padding:26px 100px 26px;
+  padding:26px 54px 26px;
 }
 .widget h3{margin:0 0 4px}
 .wsub{font-family:var(--f-head); font-size:14px; color:var(--ink-3); margin:0 0 16px}
@@ -143,7 +143,7 @@ th{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--i
 .refs{font-size:15.5px; color:var(--ink-2); margin-bottom:0}
 .refs li:last-child{margin-bottom:0}
 .refs li{margin-bottom:9px}
-footer{max-width:min(96vw, 1600px); margin:0 auto 56px; background:var(--paper); padding:0 100px 22px;
+footer{max-width:min(94vw, 1000px); margin:0 auto 56px; background:var(--paper); padding:0 54px 22px;
   font-family:var(--f-head); font-size:12.5px; color:var(--ink-3); font-style:italic}
 footer a{color:#6a7686}
 
@@ -174,11 +174,9 @@ footer a{color:#6a7686}
 <h2>Introduction</h2>
 <p class="lede">Can a lie detector catch an LLM that manipulates other agents without lying to them?</p>
 
-<p>LLMs are capable of making statements that are not technically lies but are still misleading and do not fully represent the truth. For example, a model might omit a crucial detail, selectively present evidence, or redirect suspicion toward someone else. This research project investigates whether a linear probe can detect when a model is misleading others without lying.</p>
+<p>LLMs are capable of making statements that are not technically lies but are still misleading and do not fully represent the truth. For example, a model might omit a crucial detail, selectively present evidence, or redirect suspicion toward someone else. For example, an impostor might truthfully say that another player was near the body while leaving out that it committed the kill itself. The statement is true, but it is being used to mislead the other players.</p>
 
-<p>Linear probes are commonly used as lie detectors for LLMs: they are simple statistical classifiers that recognize patterns in a model's internal representations.</p>
-
-<p>For example, an impostor might truthfully say that another player was near the body while leaving out that it committed the kill itself. The statement is true, but it is being used to mislead the other players.</p>
+<p>Linear probes are commonly used as lie detectors for LLMs: they are simple statistical classifiers that recognize patterns in a model's internal representations. This research project investigates whether a linear probe can detect when a model is misleading others without lying.</p>
 
 <h2>Building the simulation</h2>
 <p>I began building LLM deception games in September 2025 and have spent the past year improving upon my simulations.</p>
@@ -210,7 +208,7 @@ footer a{color:#6a7686}
 <p>I checked 483 impostor statements against the game records and marked which parts were lies and which were simply deceptive. Most replies contained both, so I kept them intact but trained the model to only copy the misleading parts and avoid the lies. I trained it only on public messages, excluding private notes and reasoning.</p>
 
 <figure>
-  <img src="figs/fig5_spans.png" alt="A bar showing 2,089 misleading passages and 808 outright lies across 483 impostor statements">
+  <img src="figs/fig5_spans.png" alt="Pie chart: 2,089 misleading passages (72%) and 808 outright lies (28%)">
   <figcaption>Every impostor statement was split into passages. Misleading passages were trained on; lies were penalised.</figcaption>
 </figure>
 
