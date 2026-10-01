@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Embed comparison</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap">
+<style>
+body{margin:0; background:#eceff3; font:17px/1.66 'Source Serif 4', Georgia, serif; color:#16181d}
+.wrap{max-width:1000px; margin:0 auto; background:#fff; padding:30px 54px 40px}
+h1{font-size:28px; margin:0 0 4px}
+h2{font-size:20px; margin:34px 0 4px; border-top:2px solid #16181d; padding-top:14px}
+p{margin:0 0 14px}
+.note{font-size:14px; color:#7c8792; font-style:italic; margin-bottom:16px}
+figure{margin:18px 0 10px; text-align:center}
+.frame{position:relative; width:100%; aspect-ratio:16/9; border-radius:8px;
+  overflow:hidden; border:1px solid #e3e7ec; background:#000}
+.frame iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+figcaption{font-size:13px; color:#7c8792; font-style:italic; margin-top:8px; text-align:left}
+.viewon{display:flex; justify-content:flex-end; margin-top:7px}
+.viewon a{display:inline-flex; align-items:center; gap:7px; font-size:13.5px;
+  color:#4b5560; text-decoration:none; border:1px solid #e3e7ec; border-radius:99px;
+  padding:5px 13px; background:#fff}
+.viewon a:hover{color:#16181d; background:#f3f6f9}
+.viewon svg{width:13px; height:13px}
+.xhost{min-height:120px}
+</style>
+</head><body>
+<div class="wrap">
+
+<h1>Three ways to show the video</h1>
+<p class="note">Same column width as the blog (1000px card, 54px padding), so what you see here is what it would look like in the post.</p>
+
+<h2>A — YouTube embed (what the post has now)</h2>
+<figure>
+  <div class="frame">
+    <iframe src="https://www.youtube-nocookie.com/embed/RBli6tq80QU" title="Among Us game"
+            loading="lazy" allowfullscreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  </div>
+  <figcaption>Fixed 16:9, fills the column, no surrounding chrome.</figcaption>
+</figure>
+
+<h2>B — Native X embed of the tweet</h2>
+<p class="note">This is X's own widget. It brings the card chrome with it: avatar, handle, tweet text, date, and reply/repost/like counts.</p>
+<div class="xhost">
+<blockquote class="twitter-tweet" data-dnt="true">
+  <a href="https://twitter.com/Aryan100100/status/2089107705193775386"></a>
+</blockquote>
+</div>
+
+<h2>C — YouTube player with a link out to the tweet</h2>
+<figure>
+  <div class="frame">
+    <iframe src="https://www.youtube-nocookie.com/embed/RBli6tq80QU" title="Among Us game"
+            loading="lazy" allowfullscreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  </div>
+  <div class="viewon">
+    <a href="https://x.com/Aryan100100/status/2089107705193775386" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      View the post on X
+    </a>
+  </div>
+  <figcaption>Video plays inline at full width; the pill takes anyone who wants it to the tweet.</figcaption>
+</figure>
+
+</div>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</body></html>
