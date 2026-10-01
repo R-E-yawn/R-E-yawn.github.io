@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can a Lie Detector Catch an LLM That Misleads Without Lying?</title>
+<meta name="description" content="Training a language model to deceive without lying, and testing whether an activation probe still catches it. 150 Among Us games, 483 labelled statements, 2,700 evaluated responses.">
+<meta property="og:title" content="Can a Lie Detector Catch an LLM That Misleads Without Lying?">
+<meta property="og:description" content="150 Among Us games, 483 labelled statements, 2,700 evaluated responses — and a probe that turned out to be reading the words.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ink:#16181d; --ink-2:#4b5560; --ink-3:#7c8792; --line:#e3e7ec;
+  --paper:#fff;
+  --lie:#c0392b; --lie-bg:#fde3e0;
+  --dec:#1a62c4; --dec-bg:#dbe8fb;
+  --space-1:#0b1020; --space-2:#121a33; --space-3:#1b2447;
+  --f-head:'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --f-body:'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --f-mono:'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--ink); font-family:var(--f-body); font-size:19px; line-height:1.72;
+  background:
+    radial-gradient(1100px 600px at 12% -5%, #22305c 0%, transparent 60%),
+    radial-gradient(900px 500px at 88% 8%, #2a1c42 0%, transparent 62%),
+    linear-gradient(170deg, var(--space-1) 0%, var(--space-2) 45%, var(--space-3) 100%);
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;
+}
+/* starfield — three layers of pinpoints, no images */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.75;
+  background-image:
+    radial-gradient(1.4px 1.4px at 14% 22%, #fff 50%, transparent),
+    radial-gradient(1.2px 1.2px at 71% 14%, #fff 50%, transparent),
+    radial-gradient(1.6px 1.6px at 37% 68%, #cfe0ff 50%, transparent),
+    radial-gradient(1.1px 1.1px at 88% 56%, #fff 50%, transparent),
+    radial-gradient(1.3px 1.3px at 23% 86%, #ffe9c9 50%, transparent),
+    radial-gradient(1.1px 1.1px at 57% 41%, #fff 50%, transparent),
+    radial-gradient(1.5px 1.5px at 93% 88%, #cfe0ff 50%, transparent),
+    radial-gradient(1.2px 1.2px at 6% 54%, #fff 50%, transparent),
+    radial-gradient(1.1px 1.1px at 46% 8%, #fff 50%, transparent),
+    radial-gradient(1.3px 1.3px at 79% 74%, #fff 50%, transparent);
+  background-repeat:repeat; background-size:900px 900px;
+  animation:drift 180s linear infinite;
+}
+@keyframes drift{to{background-position:900px 900px}}
+@media (prefers-reduced-motion:reduce){body::before{animation:none}}
+
+/* floating crewmates, drawn in CSS */
+.crew{position:fixed; z-index:0; pointer-events:none; opacity:.17; filter:blur(.2px)}
+.crew svg{display:block}
+.c1{top:14%; left:3.5%; width:74px; animation:bob 17s ease-in-out infinite}
+.c2{top:62%; right:3%;  width:58px; animation:bob 23s ease-in-out infinite reverse}
+.c3{top:88%; left:7%;   width:44px; animation:bob 29s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-26px) rotate(5deg)}}
+@media (prefers-reduced-motion:reduce){.crew{animation:none}}
+@media (max-width:1180px){.crew{display:none}}
+
+.page{position:relative; z-index:1; padding:46px 18px 80px}
+article{
+  max-width:49rem; margin:0 auto; background:var(--paper);
+  border-radius:16px; padding:60px 62px 70px;
+  box-shadow:0 28px 70px rgba(0,0,0,.45), 0 2px 0 rgba(255,255,255,.06) inset;
+}
+h1{
+  font-family:var(--f-head); font-size:46px; line-height:1.14; font-weight:800;
+  letter-spacing:-.022em; margin:0 0 18px; text-wrap:balance;
+}
+h2{
+  font-family:var(--f-head); font-size:27px; font-weight:700; letter-spacing:-.012em;
+  margin:52px 0 14px;
+}
+h3{font-family:var(--f-head); font-size:20px; font-weight:700; margin:30px 0 8px}
+p{margin:0 0 20px}
+a{color:#1552a8}
+.byline{
+  font-family:var(--f-head); font-size:14.5px; color:var(--ink-3); margin:0 0 34px;
+  padding-bottom:26px; border-bottom:1px solid var(--line);
+}
+.lede{font-size:21px; color:var(--ink-2)}
+em{font-style:italic}
+strong{font-weight:600}
+
+figure{margin:36px 0 34px}
+figure img{width:100%; height:auto; display:block; border-radius:10px; border:1px solid var(--line)}
+figcaption{
+  font-family:var(--f-head); font-size:14px; color:var(--ink-3);
+  margin-top:11px; line-height:1.55;
+}
+
+.keynum{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px;
+  margin:30px 0 34px;
+}
+.keynum div{background:#f7f9fb; border:1px solid var(--line); border-radius:11px; padding:15px 16px}
+.keynum b{display:block; font-family:var(--f-head); font-size:27px; font-weight:800; letter-spacing:-.02em}
+.keynum span{font-family:var(--f-head); font-size:12.5px; color:var(--ink-3); line-height:1.4; display:block; margin-top:3px}
+
+blockquote{
+  margin:28px 0; padding:4px 0 4px 22px; border-left:3px solid var(--dec);
+  color:var(--ink-2); font-size:20px;
+}
+.callout{
+  background:#f7f9fb; border:1px solid var(--line); border-left:4px solid var(--dec);
+  border-radius:10px; padding:18px 22px; margin:28px 0; font-size:18px;
+}
+.callout b{font-family:var(--f-head)}
+
+table{width:100%; border-collapse:collapse; margin:26px 0; font-family:var(--f-head);
+  font-size:15px; font-variant-numeric:tabular-nums}
+th,td{padding:10px 12px; border-bottom:1px solid var(--line); text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); font-weight:600}
+
+/* ---------------- data widget ---------------- */
+.widget{
+  margin:40px -62px; background:#fbfcfd; border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line); padding:26px 30px 24px;
+}
+.widget h3{margin:0 0 4px}
+.wsub{font-family:var(--f-head); font-size:14px; color:var(--ink-3); margin:0 0 16px}
+.wkey{display:flex; gap:18px; flex-wrap:wrap; font-family:var(--f-head); font-size:13px;
+  color:var(--ink-2); margin-bottom:14px}
+.wkey i{font-style:normal; display:inline-block; width:12px; height:12px; border-radius:3px;
+  margin-right:6px; vertical-align:-2px}
+.wgrid{display:grid; grid-template-columns:232px minmax(0,1fr); gap:0;
+  border:1px solid var(--line); border-radius:11px; overflow:hidden; background:#fff}
+.wlist{max-height:520px; overflow-y:auto; border-right:1px solid var(--line); background:#fafbfc}
+.wrow{display:block; width:100%; text-align:left; background:none; border:0;
+  border-bottom:1px solid var(--line); padding:10px 13px; cursor:pointer; font-family:var(--f-head)}
+.wrow:hover{background:#f1f4f7}
+.wrow[aria-current="true"]{background:#e8f0fb; box-shadow:inset 3px 0 0 var(--dec)}
+.wrow .wid{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3); display:block}
+.wrow .wsnip{font-size:12.5px; color:var(--ink-2); margin-top:3px; display:-webkit-box;
+  -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.45}
+.wrow .wpip{font-family:var(--f-mono); font-size:10px; margin-top:4px; display:flex; gap:8px}
+.wrow .wpip .d{color:var(--dec)} .wrow .wpip .l{color:var(--lie)}
+.wbody{max-height:520px; overflow-y:auto; padding:20px 22px}
+.wmeta{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px}
+.wchip{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.04em; text-transform:uppercase;
+  border:1px solid var(--line); border-radius:99px; padding:2px 8px; color:var(--ink-3)}
+.wtext{font-size:16.5px; line-height:1.78; white-space:pre-wrap}
+.wtext mark{padding:1px 0; border-radius:2px}
+.wtext mark.d{background:var(--dec-bg); box-shadow:inset 0 -2px 0 var(--dec)}
+.wtext mark.l{background:var(--lie-bg); box-shadow:inset 0 -2px 0 var(--lie)}
+.wmech{margin-top:16px; border-top:1px solid var(--line); padding-top:12px}
+.wmech div{font-family:var(--f-head); font-size:13px; color:var(--ink-2); margin-bottom:6px}
+.wmech .tag{font-family:var(--f-mono); font-size:10px; text-transform:uppercase; letter-spacing:.05em;
+  border-radius:3px; padding:1px 5px; margin-right:7px}
+.wmech .tag.d{background:var(--dec-bg); color:var(--dec)}
+.wmech .tag.l{background:var(--lie-bg); color:var(--lie)}
+
+.refs{font-size:16px; color:var(--ink-2)}
+.refs li{margin-bottom:9px}
+footer{max-width:49rem; margin:26px auto 0; text-align:center;
+  font-family:var(--f-head); font-size:13px; color:#8f9bb3}
+footer a{color:#b9c6e0}
+
+@media (max-width:820px){
+  body{font-size:18px}
+  article{padding:34px 22px 44px; border-radius:12px}
+  h1{font-size:33px}
+  h2{font-size:23px}
+  .widget{margin:32px -22px; padding:20px 16px}
+  .wgrid{grid-template-columns:1fr}
+  .wlist{max-height:210px; border-right:0; border-bottom:1px solid var(--line)}
+  .wbody{max-height:440px}
+}
+</style>
+</head><body>
+
+<div class="crew c1"><svg viewBox="0 0 64 76"><g fill="#c0392b"><path d="M20 20c0-8 5-13 12-13s12 5 12 13v34c0 4-3 7-7 7H27c-4 0-7-3-7-7z"/><path d="M14 30c-4 1-6 5-6 10s2 9 6 10z"/><rect x="24" y="62" width="8" height="12" rx="3"/><rect x="36" y="62" width="8" height="12" rx="3"/></g><rect x="30" y="20" width="22" height="13" rx="6.5" fill="#9fd6e8"/></svg></div>
+<div class="crew c2"><svg viewBox="0 0 64 76"><g fill="#1a62c4"><path d="M20 20c0-8 5-13 12-13s12 5 12 13v34c0 4-3 7-7 7H27c-4 0-7-3-7-7z"/><path d="M14 30c-4 1-6 5-6 10s2 9 6 10z"/><rect x="24" y="62" width="8" height="12" rx="3"/><rect x="36" y="62" width="8" height="12" rx="3"/></g><rect x="30" y="20" width="22" height="13" rx="6.5" fill="#9fd6e8"/></svg></div>
+<div class="crew c3"><svg viewBox="0 0 64 76"><g fill="#e8c33b"><path d="M20 20c0-8 5-13 12-13s12 5 12 13v34c0 4-3 7-7 7H27c-4 0-7-3-7-7z"/><path d="M14 30c-4 1-6 5-6 10s2 9 6 10z"/><rect x="24" y="62" width="8" height="12" rx="3"/><rect x="36" y="62" width="8" height="12" rx="3"/></g><rect x="30" y="20" width="22" height="13" rx="6.5" fill="#9fd6e8"/></svg></div>
+
+<div class="page">
+<article>
+
+<h1>Can a Lie Detector Catch an LLM That Misleads Without Lying?</h1>
+<p class="byline">150 Among Us games · 483 labelled statements · 2,700 evaluated responses</p>
+
+<h2>Introduction</h2>
+<p class="lede">Can a lie detector catch an LLM that manipulates other agents without lying to them?</p>
+
+<p>LLMs are capable of making statements that are not technically lies but are still misleading and do not fully represent the truth. For example, a model might omit a crucial detail, selectively present evidence, or redirect suspicion toward someone else. This research project investigates whether a linear probe can detect when a model is misleading others without lying.</p>
+
+<p>Linear probes are commonly used as lie detectors for LLMs: they are simple statistical classifiers that recognize patterns in a model's internal representations.</p>
+
+<p>For example, an impostor might truthfully say that another player was near the body while leaving out that it committed the kill itself. The statement is true, but it is being used to mislead the other players.</p>
+
+<h2>Building the simulation</h2>
+<p>I began building LLM deception games in September 2025 and have spent the past year improving upon my simulations.</p>
+
+<p>I initially spent several months trying to build a fully automated bot that could play Among Us and beat humans. When that approach proved difficult to make reliable, I used the AmongAgents architecture to build a simulation that closely represented the game's mechanics and made it accessible to LLM agents.</p>
+
+<p>I then built custom mapping software with Claude, and spent an entire day using it to map every single pixel of the game map (including rooms, hallways, task locations, vents, and even how long each task takes).</p>
+
+<p>Each turn, the game tells the agent what it can see and gives it a numbered list of actions to choose from. The agent replies with its private notes and its chosen action, and the game updates accordingly. During meetings, agents talk to one another by responding with <code>SPEAK: &lt;message&gt;</code>.</p>
+
+<h2>Training the model</h2>
+<p>GPT-5.1 played 150 games, and I used its conversations to train Qwen3.5-9B through Tinker. Qwen learned to write individual replies from the game context and conversation, so it did not need to play a full game.</p>
+
+<p>It is important to collect more than just the agents' chat logs because whether something is a lie or truth depends on what actually happened, so you need the full context of everything that happened in a game as well as what was said.</p>
+
+<p>I checked 483 impostor statements against the game records and marked which parts were lies and which were simply deceptive. Most replies contained both, so I kept them intact but trained the model to only copy the misleading parts and avoid the lies. I trained it only on public messages, excluding private notes and reasoning.</p>
+
+<figure>
+  <img src="figs/fig5_spans.png" alt="A bar showing 2,089 misleading passages and 808 outright lies across 483 impostor statements">
+  <figcaption>Every impostor statement was split into passages. Misleading passages were trained on; lies were penalised.</figcaption>
+</figure>
+
+<p>I used 414 examples for training and 69 to check how well the training was working. I kept 20 games separate for testing. I also trained a second model the same way, but on crewmate statements, to check whether any changes came specifically from learning deception or simply from additional training.</p>
+
+<figure>
+  <img src="figs/fig4_training.png" alt="Training curves: misleading loss falls from 1.97 to 1.65 while lie loss rises from 1.89 to 2.18">
+  <figcaption>On games the model had never seen, misleading passages became easier for it to produce and outright lies became harder. Epoch 2 overfitted and was discarded.</figcaption>
+</figure>
+
+<div class="widget">
+  <h3>Every statement, and what was marked</h3>
+  <p class="wsub">All 483 impostor statements from the 150 games. Scroll the list, click any statement to read it with its passages highlighted.</p>
+  <div class="wkey">
+    <span><i style="background:var(--dec-bg); box-shadow:inset 0 -3px 0 var(--dec)"></i>Misleading — nothing false, but steers belief</span>
+    <span><i style="background:var(--lie-bg); box-shadow:inset 0 -3px 0 var(--lie)"></i>Outright lie — contradicted by the game record</span>
+  </div>
+  <div class="wgrid">
+    <div class="wlist" id="wlist"></div>
+    <div class="wbody" id="wbody"></div>
+  </div>
+</div>
+
+<h2>Testing the detector</h2>
+<p>I tested the original model and both trained versions on 300 scenarios from the held-out games. Each received three instructions in separate attempts: answer honestly, lie, or mislead without saying anything false. This produced 2,700 responses.</p>
+
+<p>A separate LLM checked the responses against the game records for false claims and misleading impressions. It identified 51 lie-free deceptive responses from the original model, 66 from the deception-trained model, and 43 from the comparison model. This test did not measure whether another agent was actually fooled.</p>
+
+<p>I trained the probe on the original model's honest answers and outright lies, then tested it on misleading answers that contained no lies. The probe examined the model's internal activity while processing each response, with the behavioral instruction removed.</p>
+
+<p>I set the alarm to flag 5% of the original model's honest answers and kept that setting unchanged when testing the trained models.</p>
+
+<h2>Results</h2>
+
+<div class="keynum">
+  <div><b>42% → 75%</b><span>answers with no false claim, after deception training</span></div>
+  <div><b>0.996</b><span>probe AUROC on the original model</span></div>
+  <div><b>−0.007</b><span>evasion gain from deception training</span></div>
+  <div><b>5% → 82%</b><span>false alarms after fine-tuning</span></div>
+</div>
+
+<p>When asked to mislead without lying, the original model avoided false statements in 42% of its answers. This rose to 75% after deception training, compared with 65% after training on crewmate dialogue. The improvement carried over to a new prompt format. These percentages measure avoiding lies, not successfully fooling someone.</p>
+
+<figure>
+  <img src="figs/fig2_lie_compliance.png" alt="Bar chart: 42% original, 75% deception-trained, 65% crewmate-trained">
+  <figcaption>Told to mislead without stating anything false, the original model lied anyway in most attempts. Deception training nearly doubled compliance.</figcaption>
+</figure>
+
+<p>The probe could still distinguish lie-free deception from honest answers very well. Its AUROC scores were 0.996 for the original model, 0.966 for the deception-trained model, and 0.973 for the comparison model. AUROC measures how well a detector ranks deceptive answers above honest ones; 1.0 is perfect and 0.5 is chance. Deception training showed no clear advantage at avoiding detection compared with ordinary training: the difference was −0.007, with a 95% confidence interval from −0.030 to +0.017.</p>
+
+<figure>
+  <img src="figs/fig6_effect_size.png" alt="Effect size −0.007 with a 95% confidence interval from −0.030 to +0.017, straddling zero">
+  <figcaption>The interval straddles zero and is narrow enough to rule out any sizeable effect. This is a genuine null, not an inconclusive result.</figcaption>
+</figure>
+
+<p>However, the unchanged alarm setting flagged 82% of the deception-trained model's honest answers and 97% of the comparison model's. The probe could still separate honest and deceptive answers, but its old alarm setting no longer worked reliably. Training a fresh probe for each updated model restored near-perfect separation.</p>
+
+<figure>
+  <img src="figs/fig3_false_alarms.png" alt="False alarm rate rising from 5% to 82% and 97% after fine-tuning">
+  <figcaption>The alarm was calibrated on the original model. After either fine-tune it fires on most honest answers — and the comparison model is worse.</figcaption>
+</figure>
+
+<p>A simple classifier that only counted words in the responses matched or beat the internal probe on all three models. The text alone was enough to distinguish honest from misleading answers in this test. That raises the possibility that the probe relied on wording or writing style, rather than detecting deceptive intent.</p>
+
+<figure>
+  <img src="figs/fig1_probe_vs_text.png" alt="Activation probe versus words-only classifier: 0.996 vs 1.000, 0.966 vs 0.998, 0.973 vs 0.992">
+  <figcaption>The words-only classifier has no access to the model at all, and still matches or beats the probe on every version.</figcaption>
+</figure>
+
+<div class="callout">
+<b>Why this matters for the headline.</b> If a classifier reading only the text does just as well, then a high probe score is not evidence that the probe found deception inside the model. It may simply be reading how the answer is written.
+</div>
+
+<p>At first, the recorded activity included the instruction itself, such as "answer honestly" or "mislead." This gave the detector a shortcut to the answer. I recorded the activity again without the instruction. The score stayed near-perfect, which prompted the words-only test.</p>
+
+<h2>Limitations and next steps</h2>
+<p>The experiment tested one model family in one game, with only 43 to 66 lie-free deceptive responses per model. One LLM judged the responses, without a second judge or human review.</p>
+
+<p>The models were explicitly told when to deceive, which may have made their answers easier to identify by writing style. The comparison model also learned from crewmates rather than impostors, so the training data differed in role as well as honesty.</p>
+
+<p>These results show that deception training reduced outright lies without clearly making lie-free deception harder to detect in this setup. They do not establish that the probe detected deceptive intent or that the responses actually fooled other agents.</p>
+
+<p>A stronger follow-up would test deception that arises naturally during gameplay, check whether other agents were fooled, and compare honest and misleading answers that cannot easily be distinguished by their wording.</p>
+
+<h2>How the project began</h2>
+<p>Ever since reading <em>Generative Agents: Interactive Simulacra of Human Behavior</em>, I have been fascinated by simulations and have spent over a year building them. I loved the idea that you could stare at a screen and watch events unfold between agents, each trying to accomplish something. It felt like watching a sports game: you could follow what everyone was doing, get invested, and have no idea what would happen next.</p>
+
+<p>At first, I wanted to build an "AI reality TV show." I chose Among Us because I already loved playing it with friends and watching others play. If watching people try to deceive one another was so entertaining, I figured watching LLM agents do the same could be just as interesting.</p>
+
+<p>As I built better simulations, ran more games, and read more papers, I noticed something unexpected: the LLMs seemed much better at lying and deceiving others than at recognizing when they were being lied to!</p>
+
+<p>Then I came across a paper by Satvik Golechha and Adrià Garriga-Alonso. They had also made LLMs play Among Us and reported a similar gap between their ability to deceive and their ability to detect deception.</p>
+
+<p>I sent Satvik an enthusiastic email along with my research proposal, and he responded. We arranged a call, and talking with him helped shape my approach to the experiment and made me even more excited to move forward.</p>
+
+<p>I hope you have half as much fun reading this as I did building it, because I had a blast :)</p>
+
+<h2>References</h2>
+<ul class="refs">
+<li>Golechha, S., &amp; Garriga-Alonso, A. <em>Among Us: A Sandbox for Measuring and Detecting Agentic Deception.</em></li>
+<li>Park, J. S., et al. <em>Generative Agents: Interactive Simulacra of Human Behavior.</em></li>
+</ul>
+
+</article>
+<footer>Figures made with the <a href="https://github.com/chenliu-1996/figures4papers">figures4papers</a> house style.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var list=document.getElementById('wlist'), body=document.getElementById('wbody'), D=[], cur=0;
+
+  function esc(t){var d=document.createElement('div'); d.textContent=t; return d.innerHTML;}
+
+  function render(){
+    var it=D[cur]; if(!it) return;
+    Array.prototype.forEach.call(list.children,function(el,i){
+      el.setAttribute('aria-current', i===cur?'true':'false');
+    });
+    var out='', pos=0;
+    it.sp.forEach(function(s){
+      if(s.s>pos) out+=esc(it.t.slice(pos,s.s));
+      out+='<mark class="'+(s.k?'l':'d')+'">'+esc(it.t.slice(s.s,s.e))+'</mark>';
+      pos=s.e;
+    });
+    if(pos<it.t.length) out+=esc(it.t.slice(pos));
+
+    var nL=it.sp.filter(function(s){return s.k;}).length;
+    var nD=it.sp.length-nL;
+    var mech='';
+    it.sp.forEach(function(s){
+      if(!s.m) return;
+      mech+='<div><span class="tag '+(s.k?'l':'d')+'">'+(s.k?'lie':'misleading')+'</span>'+esc(s.m)+'</div>';
+    });
+
+    body.innerHTML =
+      '<div class="wmeta">'+
+        '<span class="wchip">game '+esc(it.g)+'</span>'+
+        '<span class="wchip">round '+it.r+'</span>'+
+        '<span class="wchip">'+esc(it.n)+'</span>'+
+        (it.w?'<span class="wchip">impostor won</span>':'')+
+        '<span class="wchip">'+nD+' misleading</span>'+
+        (nL?'<span class="wchip">'+nL+' lie'+(nL>1?'s':'')+'</span>':'')+
+      '</div>'+
+      '<div class="wtext">'+out+'</div>'+
+      (mech?'<div class="wmech">'+mech+'</div>':'');
+  }
+
+  fetch('data/spans.json').then(function(r){return r.json();}).then(function(rows){
+    D=rows;
+    var html='';
+    rows.forEach(function(it,i){
+      var nL=it.sp.filter(function(s){return s.k;}).length, nD=it.sp.length-nL;
+      html+='<button class="wrow" data-i="'+i+'" aria-current="'+(i===0)+'">'+
+            '<span class="wid">game '+esc(it.g)+' · round '+it.r+' · '+esc(it.n)+'</span>'+
+            '<span class="wsnip">'+esc(it.t.slice(0,96))+'</span>'+
+            '<span class="wpip"><span class="d">'+nD+' misleading</span>'+
+            (nL?'<span class="l">'+nL+' lie'+(nL>1?'s':'')+'</span>':'')+'</span></button>';
+    });
+    list.innerHTML=html;
+    list.addEventListener('click',function(e){
+      var b=e.target.closest('.wrow'); if(!b) return;
+      cur=+b.dataset.i; render(); body.scrollTop=0;
+    });
+    render();
+  }).catch(function(){
+    body.innerHTML='<p style="color:#7c8792">Could not load the statement data.</p>';
+  });
+})();
+</script>
+</body></html>
