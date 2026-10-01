@@ -32,8 +32,8 @@ body{
 
 .page{position:relative; z-index:1; padding:92px 0 0}
 article{
-  max-width:72rem; margin:0 auto; background:var(--paper);
-  padding:40px 96px 28px;
+  max-width:min(93vw, 1400px); margin:0 auto; background:var(--paper);
+  padding:40px 150px 28px;
 }
 h1{
   font-family:var(--f-head); font-size:36px; line-height:1.2; font-weight:700;
@@ -55,11 +55,13 @@ a{color:#1552a8}
 em{font-style:italic}
 strong{font-weight:600}
 
-figure{margin:22px 0 20px}
-figure img{width:100%; height:auto; display:block; border-radius:10px; border:1px solid var(--line)}
+figure{margin:22px 0 20px; text-align:center}
+figure img{width:100%; max-width:560px; height:auto; display:block;
+  margin:0 auto; border-radius:8px; border:1px solid var(--line)}
 figcaption{
-  font-family:var(--f-head); font-size:13.5px; color:var(--ink-3);
-  margin-top:8px; line-height:1.5; font-style:italic;
+  font-family:var(--f-head); font-size:13px; color:var(--ink-3);
+  margin:8px auto 0; line-height:1.5; font-style:italic;
+  max-width:560px; text-align:left;
 }
 
 .keynum{
@@ -88,8 +90,9 @@ th{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--i
 
 /* ---------------- data widget ---------------- */
 .widget{
-  margin:26px -96px; background:#fbfcfd; border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line); padding:22px 96px 20px;
+  margin:30px -150px; background:#e9eef5;
+  border-top:1px solid #cfd9e6; border-bottom:1px solid #cfd9e6;
+  padding:26px 150px 26px;
 }
 .widget h3{margin:0 0 4px}
 .wsub{font-family:var(--f-head); font-size:14px; color:var(--ink-3); margin:0 0 16px}
@@ -98,8 +101,9 @@ th{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--i
 .wkey i{font-style:normal; display:inline-block; width:12px; height:12px; border-radius:3px;
   margin-right:6px; vertical-align:-2px}
 .wgrid{display:grid; grid-template-columns:232px minmax(0,1fr); gap:0;
-  border:1px solid var(--line); border-radius:11px; overflow:hidden; background:#fff}
-.wlist{max-height:520px; overflow-y:auto; border-right:1px solid var(--line); background:#fafbfc}
+  border:1px solid #cfd9e6; border-radius:10px; overflow:hidden; background:#fff;
+  box-shadow:0 1px 3px rgba(20,40,70,.07)}
+.wlist{max-height:520px; overflow-y:auto; border-right:1px solid #cfd9e6; background:#f6f9fc}
 .wrow{display:block; width:100%; text-align:left; background:none; border:0;
   border-bottom:1px solid var(--line); padding:10px 13px; cursor:pointer; font-family:var(--f-head)}
 .wrow:hover{background:#f1f4f7}
@@ -127,7 +131,7 @@ th{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--i
 .refs{font-size:15.5px; color:var(--ink-2); margin-bottom:0}
 .refs li:last-child{margin-bottom:0}
 .refs li{margin-bottom:9px}
-footer{max-width:72rem; margin:0 auto 70px; background:var(--paper); padding:0 96px 22px;
+footer{max-width:min(93vw, 1400px); margin:0 auto 70px; background:var(--paper); padding:0 150px 22px;
   font-family:var(--f-head); font-size:12.5px; color:var(--ink-3); font-style:italic}
 footer a{color:#6a7686}
 
@@ -140,6 +144,7 @@ footer a{color:#6a7686}
   h1{font-size:27px}
   h2{font-size:19px}
   .widget{margin:22px -20px; padding:18px 20px}
+  figure img{max-width:100%}
   .wgrid{grid-template-columns:1fr}
   .wlist{max-height:210px; border-right:0; border-bottom:1px solid var(--line)}
   .wbody{max-height:440px}
