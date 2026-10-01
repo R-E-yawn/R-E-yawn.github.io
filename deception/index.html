@@ -91,10 +91,9 @@ figure{margin:22px 0 20px; text-align:center}
 .video figcaption{max-width:100%}
 figure img{width:100%; max-width:520px; height:auto; display:block;
   margin:0 auto; border-radius:8px; border:1px solid var(--line)}
-/* one short proportion bar: full column width, no frame, caption under it */
-figure.bar{margin:16px 0 18px}
-figure.bar img{max-width:100%; border:0; border-radius:3px}
-figure.bar figcaption{max-width:100%; text-align:left; margin-top:9px}
+/* the pie is all chart and no padding, so it reads at a small size */
+figure.pie img{max-width:300px; border:0}
+figure.pie figcaption{max-width:430px; text-align:center}
 
 /* stated in type, not in a box: body size, bold, in the result colour */
 .finalresult{
@@ -259,7 +258,7 @@ tbody td:not(:first-child){font-weight:600}
 
 <p>I checked 483 impostor statements against the game records and marked which parts were lies and which were simply deceptive. Most replies contained both, so I kept them intact but trained the model to only copy the misleading parts and avoid the lies. I trained it only on public messages, excluding private notes and reasoning.</p>
 
-<figure class="bar">
+<figure class="pie">
   <img src="figs/fig5_spans.png" alt="Pie chart: 2,089 misleading passages (72%) and 808 outright lies (28%)">
   <figcaption>Every impostor statement was split into passages. Misleading passages were trained on; lies were penalised.</figcaption>
 </figure>
