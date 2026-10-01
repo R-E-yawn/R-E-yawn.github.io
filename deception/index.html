@@ -47,10 +47,14 @@ h3{font-family:var(--f-head); font-size:18px; font-weight:700; margin:22px 0 6px
 p{margin:0 0 14px}
 a{color:#1552a8}
 .byline{
-  font-family:var(--f-head); font-size:15px; color:var(--ink-2); margin:0 0 22px;
-  font-style:italic;
+  font-family:var(--f-head); font-size:22px; color:var(--ink); margin:2px 0 20px;
+  font-style:normal; font-weight:600; letter-spacing:-.006em;
 }
-.byline span{font-style:normal; color:var(--ink-3); font-size:13.5px}
+.byline em{font-style:normal; font-weight:400; color:var(--ink-3); font-size:17px}
+.byline span{
+  display:block; font-weight:400; color:var(--ink-3); font-size:13.5px;
+  margin-top:5px; letter-spacing:0;
+}
 .lede{font-size:18px; color:var(--ink-2)}
 em{font-style:italic}
 strong{font-weight:600}
@@ -157,7 +161,7 @@ footer a{color:#6a7686}
 <article>
 
 <h1>Can a Lie Detector Catch an LLM That Misleads Without Lying?</h1>
-<p class="byline">by Aryan Tyagi<br><span>150 Among Us games · 483 labelled statements · 2,700 evaluated responses</span></p>
+<p class="byline"><em>by</em> Aryan Tyagi<span>150 Among Us games · 483 labelled statements · 2,700 evaluated responses</span></p>
 
 <h2>Introduction</h2>
 <p class="lede">Can a lie detector catch an LLM that manipulates other agents without lying to them?</p>
