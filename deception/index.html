@@ -60,6 +60,14 @@ em{font-style:italic}
 strong{font-weight:600}
 
 figure{margin:22px 0 20px; text-align:center}
+.video{margin:24px 0 22px}
+.video .frame{
+  position:relative; width:100%; max-width:760px; margin:0 auto;
+  aspect-ratio:16/9; border-radius:8px; overflow:hidden;
+  border:1px solid var(--line); background:#000;
+}
+.video iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+.video figcaption{max-width:760px}
 figure img{width:100%; max-width:560px; height:auto; display:block;
   margin:0 auto; border-radius:8px; border:1px solid var(--line)}
 figcaption{
@@ -180,6 +188,19 @@ footer a{color:#6a7686}
 <p>I then built custom mapping software with Claude, and spent an entire day using it to map every single pixel of the game map (including rooms, hallways, task locations, vents, and even how long each task takes).</p>
 
 <p>Each turn, the game tells the agent what it can see and gives it a numbered list of actions to choose from. The agent replies with its private notes and its chosen action, and the game updates accordingly. During meetings, agents talk to one another by responding with <code>SPEAK: &lt;message&gt;</code>.</p>
+
+<figure class="video">
+  <div class="frame">
+    <iframe src="https://www.youtube-nocookie.com/embed/RBli6tq80QU"
+            title="A full Among Us game played by GPT-5.1 agents"
+            loading="lazy" allowfullscreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  </div>
+  <figcaption>Here is a view of one of my games. Every player is GPT-5.1; the red one is the impostor.
+  Thought bubbles show what each agent is planning as it moves, and the meeting at the end is the
+  agents arguing it out before the vote.</figcaption>
+</figure>
 
 <h2>Training the model</h2>
 <p>GPT-5.1 played 150 games, and I used its conversations to train Qwen3.5-9B through Tinker. Qwen learned to write individual replies from the game context and conversation, so it did not need to play a full game.</p>
