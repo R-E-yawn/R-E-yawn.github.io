@@ -5,7 +5,7 @@
 <title>Can a Lie Detector Catch an LLM That Misleads Without Lying?</title>
 <meta name="description" content="Training a language model to deceive without lying, and testing whether an activation probe still catches it. 150 Among Us games, 483 labelled data points.">
 <meta property="og:title" content="Can a Lie Detector Catch an LLM That Misleads Without Lying?">
-<meta property="og:description" content="150 Among Us games, 483 labelled data points — and a probe that turned out to be reading the words.">
+<meta property="og:description" content="150 Among Us games, 483 labelled data points, and a probe that turned out to be reading the words.">
 <meta property="og:type" content="article">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -108,7 +108,7 @@ figcaption{
 }
 
 
-/* booktabs: rules above and below the table and under the header, nothing else —
+/* booktabs: rules above and below the table and under the header, nothing else:
    the convention every journal uses, and the reason it does not read as a dashboard */
 table{width:100%; border-collapse:collapse; margin:20px 0 24px; font-family:var(--f-head);
   font-size:14.5px; font-variant-numeric:tabular-nums lining-nums}
@@ -233,7 +233,7 @@ tbody td:not(:first-child){font-weight:600}
 <p>Linear probes are commonly used as lie detectors for LLMs: they are simple statistical classifiers that recognize patterns in a model's internal representations. This research project investigates whether a linear probe can detect when a model is misleading others without lying.</p>
 
 <h2>Building the simulation</h2>
-<p>I began building LLM deception games in August 2025, starting with <a href="https://github.com/R-E-yawn/LLM-Game">this one</a>, and have spent the past year improving upon my simulations — here is my <a href="https://x.com/Aryan100100/status/2089107705193775386">latest sim</a>.</p>
+<p>I began building LLM deception games in August 2025, starting with <a href="https://github.com/R-E-yawn/LLM-Game">this one</a>, and have spent the past year improving upon my simulations. Here is my <a href="https://x.com/Aryan100100/status/2089107705193775386">latest sim</a>.</p>
 
 <p>I initially spent several months trying to build a fully automated bot that could play Among Us and beat humans. When that approach proved difficult to make reliable, I used the AmongAgents architecture to build a simulation that closely represented the game's mechanics and made it accessible to LLM agents.</p>
 
@@ -243,7 +243,7 @@ tbody td:not(:first-child){font-weight:600}
 
 <figure class="video">
   <div class="frame">
-    <iframe src="https://www.youtube-nocookie.com/embed/RBli6tq80QU"
+    <iframe src="https://www.youtube-nocookie.com/embed/RBli6tq80QU?rel=0&amp;iv_load_policy=3&amp;modestbranding=1"
             title="A full Among Us game played by GPT-5.1 agents"
             loading="lazy" allowfullscreen
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -277,8 +277,8 @@ tbody td:not(:first-child){font-weight:600}
   <h3>Data</h3>
   <p class="wsub">All 483 impostor statements from the 150 games. Scroll the list, click any statement to read it with its passages highlighted.</p>
   <div class="wkey">
-    <span><i style="background:var(--dec-bg); box-shadow:inset 0 -3px 0 var(--dec)"></i>Misleading — nothing false, but steers belief</span>
-    <span><i style="background:var(--lie-bg); box-shadow:inset 0 -3px 0 var(--lie)"></i>Outright lie — contradicted by the game record</span>
+    <span><i style="background:var(--dec-bg); box-shadow:inset 0 -3px 0 var(--dec)"></i>Misleading: nothing false, but steers belief</span>
+    <span><i style="background:var(--lie-bg); box-shadow:inset 0 -3px 0 var(--lie)"></i>Outright lie: contradicted by the game record</span>
   </div>
   <div class="wgrid">
     <div class="wlist" id="wlist"></div>
@@ -332,10 +332,10 @@ explained further down; the alarm rate uses the 5% cutoff fixed on the original 
 
 <figure>
   <img src="figs/fig3_false_alarms.png" alt="False alarm rate rising from 5% to 82% and 97% after fine-tuning">
-  <figcaption>The alarm was calibrated on the original model. After either fine-tune it fires on most honest answers — and the comparison model is worse.</figcaption>
+  <figcaption>The alarm was calibrated on the original model. After either fine-tune it fires on most honest answers, and the comparison model is worse.</figcaption>
 </figure>
 
-<p class="explainer"><b>What the detection scores mean.</b> The charts report a score called <b>AUROC</b>, short for area under the receiver operating characteristic curve. Ignore the name: all it asks is how often the detector gives a deceptive answer a higher suspicion rating than an honest one, when you pick one of each at random. <b>1.0</b> means it gets every pair right, <b>0.5</b> means it does no better than a coin flip, and the scores here run from 0.966 to 1.000. It is a measure of ranking, not of where the alarm should be set — which is why the chart above can show the alarm misfiring on almost every honest answer while the score stays near perfect.</p>
+<p class="explainer"><b>What the detection scores mean.</b> The charts report a score called <b>AUROC</b>, short for area under the receiver operating characteristic curve. Ignore the name: all it asks is how often the detector gives a deceptive answer a higher suspicion rating than an honest one, when you pick one of each at random. <b>1.0</b> means it gets every pair right, <b>0.5</b> means it does no better than a coin flip, and the scores here run from 0.966 to 1.000. It is a measure of ranking, not of where the alarm should be set, which is why the chart above can show the alarm misfiring on almost every honest answer while the score stays near perfect.</p>
 
 <p>The biggest limitation is that simply counting words in the answers worked as well as examining the model's internal activity. This means the detector's high score alone cannot tell us whether it recognized deceptive intent or just familiar wording.</p>
 
