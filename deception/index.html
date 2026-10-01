@@ -57,10 +57,12 @@ a{color:#1552a8}
 }
 .lede{font-size:18px; color:var(--ink)}
 
-/* one line: the mark, then the words as the link */
-.repolink{display:flex; align-items:center; gap:8px; margin:0 0 20px}
-.repolink svg{width:17px; height:17px; color:var(--ink)}
-.repolink a{font-family:var(--f-head); font-size:16px; font-weight:600}
+/* sits beside the byline, not under it */
+.byline-row{display:flex; align-items:baseline; gap:20px; flex-wrap:wrap; margin:2px 0 4px}
+.byline-row .byline{margin:0}
+.repolink{display:inline-flex; align-items:center; gap:7px; margin:0}
+.repolink svg{width:15px; height:15px; color:var(--ink); align-self:center}
+.repolink a{font-family:var(--f-head); font-size:15px; font-weight:600}
 
 /* masthead: title block left, portrait right */
 /* the title takes the width it needs; the portrait centres in whatever is left,
@@ -186,6 +188,10 @@ tbody td:not(:first-child){font-weight:600}
   h2{font-size:19px}
   .widget{margin:22px -20px; padding:18px 20px}
   .masthead{gap:16px}
+  /* the 520px title column must shrink on a phone, or it pushes the portrait off-screen */
+  .mh-text{width:auto; flex:1 1 auto; min-width:0}
+  .byline-row{gap:12px}
+  .repolink a{font-size:14px}
   .avatar{width:96px; height:96px}
   .masthead + h2{margin-top:6px}
   .mh-me{gap:7px}
@@ -210,7 +216,13 @@ tbody td:not(:first-child){font-weight:600}
 <div class="masthead">
   <div class="mh-text">
     <h1>Can a Lie Detector Catch an LLM That Misleads Without Lying?</h1>
-    <p class="byline"><em>by</em> Aryan Tyagi</p>
+    <div class="byline-row">
+      <p class="byline"><em>by</em> Aryan Tyagi</p>
+      <span class="repolink">
+  <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>
+  <a href="https://github.com/R-E-yawn/among-us-deception">Code and data</a>
+</span>
+    </div>
   </div>
   <div class="mh-me">
     <img class="avatar" src="figs/aryan.jpg" alt="Aryan Tyagi">
@@ -230,10 +242,7 @@ tbody td:not(:first-child){font-weight:600}
   </div>
 </div>
 
-<p class="repolink">
-  <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>
-  <a href="https://github.com/R-E-yawn/among-us-deception">Code and data</a>
-</p>
+
 
 <h2>Introduction</h2>
 <p class="lede">Can a lie detector catch an LLM that manipulates other agents without lying to them?</p>
