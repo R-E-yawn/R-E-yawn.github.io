@@ -91,9 +91,10 @@ figure{margin:22px 0 20px; text-align:center}
 .video figcaption{max-width:100%}
 figure img{width:100%; max-width:520px; height:auto; display:block;
   margin:0 auto; border-radius:8px; border:1px solid var(--line)}
-/* the pie carries two numbers; it does not need half the column to do it */
-figure.compact img{max-width:330px}
-figure.compact figcaption{max-width:420px; text-align:center}
+/* one short proportion bar: full column width, no frame, caption under it */
+figure.bar{margin:16px 0 18px}
+figure.bar img{max-width:100%; border:0; border-radius:3px}
+figure.bar figcaption{max-width:100%; text-align:left; margin-top:9px}
 
 /* stated in type, not in a box: bold and in the result colour */
 .finalresult{
@@ -186,7 +187,6 @@ tbody td:not(:first-child){font-weight:600}
   .social a{width:24px; height:24px}
   .social svg{width:15px; height:15px}
   .finalresult{font-size:17.5px; padding:14px 16px}
-  figure.compact img{max-width:260px}
   /* scroll the table rather than wrapping every label onto five lines */
   table{font-size:13px; min-width:470px}
   th,td{padding:8px 6px}
@@ -261,7 +261,7 @@ tbody td:not(:first-child){font-weight:600}
 
 <p>I checked 483 impostor statements against the game records and marked which parts were lies and which were simply deceptive. Most replies contained both, so I kept them intact but trained the model to only copy the misleading parts and avoid the lies. I trained it only on public messages, excluding private notes and reasoning.</p>
 
-<figure class="compact">
+<figure class="bar">
   <img src="figs/fig5_spans.png" alt="Pie chart: 2,089 misleading passages (72%) and 808 outright lies (28%)">
   <figcaption>Every impostor statement was split into passages. Misleading passages were trained on; lies were penalised.</figcaption>
 </figure>
@@ -335,7 +335,8 @@ explained further down; the alarm rate uses the 5% cutoff fixed on the original 
   <figcaption>The alarm was calibrated on the original model. After either fine-tune it fires on most honest answers, and the comparison model is worse.</figcaption>
 </figure>
 
-<p class="explainer"><b>What the detection scores mean.</b> The charts report a score called <b>AUROC</b>, short for area under the receiver operating characteristic curve. Ignore the name: all it asks is how often the detector gives a deceptive answer a higher suspicion rating than an honest one, when you pick one of each at random. <b>1.0</b> means it gets every pair right, <b>0.5</b> means it does no better than a coin flip, and the scores here run from 0.966 to 1.000. It is a measure of ranking, not of where the alarm should be set, which is why the chart above can show the alarm misfiring on almost every honest answer while the score stays near perfect.</p>
+<p class="explainer"><b>What the detection scores mean:</b> AUROC measures how well the detector tells deceptive and honest answers apart. <b>1.0 is perfect; 0.5 is no better than chance.</b> The scores here range from 0.966 to 1.000.</p>
+<p class="explainer">For example, suppose the detector gives every honest answer a suspicion score of 70 and every deceptive answer a score of 90. It separates them perfectly. But if the alarm goes off for anything above 50, it will flag every honest answer too. The detector can tell the answers apart, but its alarm is set too low.</p>
 
 <p>The biggest limitation is that simply counting words in the answers worked as well as examining the model's internal activity. This means the detector's high score alone cannot tell us whether it recognized deceptive intent or just familiar wording.</p>
 
