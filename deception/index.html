@@ -55,7 +55,18 @@ a{color:#1552a8}
   display:block; font-weight:400; color:var(--ink-3); font-size:13.5px;
   margin-top:5px; letter-spacing:0;
 }
-.lede{font-size:18px; color:var(--ink-2)}
+.lede{font-size:18px; color:var(--ink)}
+
+/* masthead: title block left, portrait right */
+.masthead{display:flex; align-items:flex-start; justify-content:space-between; gap:30px}
+.mh-text{min-width:0; flex:1 1 auto}
+.mh-text h1{margin-bottom:8px}
+.mh-text .byline{margin-bottom:4px}
+.avatar{
+  flex:0 0 auto; width:116px; height:116px; border-radius:50%; object-fit:cover;
+  object-position:center 22%; display:block; margin-top:6px;
+  border:3px solid #fff; box-shadow:0 0 0 1px var(--line), 0 3px 12px rgba(20,40,70,.16);
+}
 em{font-style:italic}
 strong{font-weight:600}
 
@@ -70,6 +81,16 @@ figure{margin:22px 0 20px; text-align:center}
 .video figcaption{max-width:100%}
 figure img{width:100%; max-width:520px; height:auto; display:block;
   margin:0 auto; border-radius:8px; border:1px solid var(--line)}
+/* the pie carries two numbers; it does not need half the column to do it */
+figure.compact img{max-width:330px}
+figure.compact figcaption{max-width:420px; text-align:center}
+
+.finalresult{
+  font-family:var(--f-head); font-size:20px; line-height:1.45; font-weight:600;
+  background:#eef5ec; border:1px solid #cfe0c9; border-left:5px solid #3f7d3a;
+  border-radius:8px; padding:16px 20px; margin:16px 0 22px;
+}
+.finalresult b{font-weight:700}
 figcaption{
   font-family:var(--f-head); font-size:13px; color:var(--ink-3);
   margin:8px auto 0; line-height:1.5; font-style:italic;
@@ -156,6 +177,12 @@ footer a{color:#6a7686}
   h1{font-size:27px}
   h2{font-size:19px}
   .widget{margin:22px -20px; padding:18px 20px}
+  .masthead{gap:16px}
+  .avatar{width:74px; height:74px; border-width:2px}
+  .finalresult{font-size:17.5px; padding:14px 16px}
+  /* "42% → 75%" must not break across the arrow on a phone */
+  .keynum b{font-size:22px; white-space:nowrap}
+  figure.compact img{max-width:260px}
   figure img{max-width:100%}
   .wgrid{grid-template-columns:1fr}
   .wlist{max-height:210px; border-right:0; border-bottom:1px solid var(--line)}
@@ -168,8 +195,14 @@ footer a{color:#6a7686}
 <div class="page">
 <article>
 
-<h1>Can a Lie Detector Catch an LLM That Misleads Without Lying?</h1>
-<p class="byline"><em>by</em> Aryan Tyagi<span>150 Among Us games · 483 labelled data points</span></p>
+<div class="masthead">
+  <div class="mh-text">
+    <h1>Can a Lie Detector Catch an LLM That Misleads Without Lying?</h1>
+    <p class="byline"><em>by</em> Aryan Tyagi<span>150 Among Us games · 483 labelled data points</span></p>
+  </div>
+  <!-- drops out silently until figs/aryan.jpg exists, so no broken-image icon -->
+  <img class="avatar" src="figs/aryan.jpg" alt="Aryan Tyagi" onerror="this.remove()">
+</div>
 
 <h2>Introduction</h2>
 <p class="lede">Can a lie detector catch an LLM that manipulates other agents without lying to them?</p>
@@ -207,7 +240,7 @@ footer a{color:#6a7686}
 
 <p>I checked 483 impostor statements against the game records and marked which parts were lies and which were simply deceptive. Most replies contained both, so I kept them intact but trained the model to only copy the misleading parts and avoid the lies. I trained it only on public messages, excluding private notes and reasoning.</p>
 
-<figure>
+<figure class="compact">
   <img src="figs/fig5_spans.png" alt="Pie chart: 2,089 misleading passages (72%) and 808 outright lies (28%)">
   <figcaption>Every impostor statement was split into passages. Misleading passages were trained on; lies were penalised.</figcaption>
 </figure>
@@ -243,46 +276,47 @@ footer a{color:#6a7686}
 
 <h2>Results</h2>
 
+<p class="finalresult">Final Result: Yes, the detector could distinguish deception without lies from honest answers in this test!</p>
+
 <div class="keynum">
   <div><b>42% → 75%</b><span>answers with no false claim, after deception training</span></div>
-  <div><b>0.996</b><span>probe AUROC on the original model</span></div>
+  <div><b>0.996</b><span>detection score on the original model (1.0 = perfect, 0.5 = coin flip)</span></div>
   <div><b>−0.007</b><span>evasion gain from deception training</span></div>
   <div><b>5% → 82%</b><span>false alarms after fine-tuning</span></div>
 </div>
 
-<p>When asked to mislead without lying, the original model avoided false statements in 42% of its answers. This rose to 75% after deception training, compared with 65% after training on crewmate dialogue. The improvement carried over to a new prompt format. These percentages measure avoiding lies, not successfully fooling someone.</p>
+<p>Training helped the model avoid outright lies. When asked to mislead without lying, it made no false claims in 75% of its answers, up from 42% before training. The model trained on crewmate dialogue scored 65%. These numbers do not tell us whether another agent was actually fooled.</p>
 
 <figure>
   <img src="figs/fig2_lie_compliance.png" alt="Bar chart: 42% original, 75% deception-trained, 65% crewmate-trained">
   <figcaption>Told to mislead without stating anything false, the original model lied anyway in most attempts. Deception training nearly doubled compliance.</figcaption>
 </figure>
 
-<p>The probe could still distinguish lie-free deception from honest answers very well. Its AUROC scores were 0.996 for the original model, 0.966 for the deception-trained model, and 0.973 for the comparison model. AUROC measures how well a detector ranks deceptive answers above honest ones; 1.0 is perfect and 0.5 is chance. Deception training showed no clear advantage at avoiding detection compared with ordinary training: the difference was −0.007, with a 95% confidence interval from −0.030 to +0.017.</p>
+<p>Deception training did not clearly make the model harder to detect than ordinary training. The difference between the two trained models was small enough to be consistent with no effect.</p>
 
 <figure>
   <img src="figs/fig6_effect_size.png" alt="Effect size −0.007 with a 95% confidence interval from −0.030 to +0.017, straddling zero">
-  <figcaption>The interval straddles zero and is narrow enough to rule out any sizeable effect. This is a genuine null, not an inconclusive result.</figcaption>
 </figure>
 
-<p>However, the unchanged alarm setting flagged 82% of the deception-trained model's honest answers and 97% of the comparison model's. The probe could still separate honest and deceptive answers, but its old alarm setting no longer worked reliably. Training a fresh probe for each updated model restored near-perfect separation.</p>
+<p>However, the detector's old alarm setting became unreliable after training. It falsely flagged 82% of honest answers from the deception-trained model and 97% from the crewmate-trained model, compared with 5% from the original model. It could still distinguish the groups, but the cutoff for raising an alarm needed updating.</p>
 
 <figure>
   <img src="figs/fig3_false_alarms.png" alt="False alarm rate rising from 5% to 82% and 97% after fine-tuning">
   <figcaption>The alarm was calibrated on the original model. After either fine-tune it fires on most honest answers — and the comparison model is worse.</figcaption>
 </figure>
 
-<p>A simple classifier that only counted words in the responses matched or beat the internal probe on all three models. The text alone was enough to distinguish honest from misleading answers in this test. That raises the possibility that the probe relied on wording or writing style, rather than detecting deceptive intent.</p>
+<div class="callout">
+<b>What the detection scores mean.</b> The charts below report a score called <strong>AUROC</strong>, short for area under the receiver operating characteristic curve. Ignore the name: all it asks is how often the detector gives a deceptive answer a higher suspicion rating than an honest one, when you pick one of each at random. <strong>1.0</strong> means it gets every pair right, <strong>0.5</strong> means it does no better than a coin flip, and the scores here run from 0.966 to 1.000. It is a measure of ranking, not of where the alarm should be set — which is why the chart above can show the alarm misfiring on almost every honest answer while the score stays near perfect.
+</div>
+
+<p>The biggest limitation is that simply counting words in the answers worked as well as examining the model's internal activity. This means the detector's high score alone cannot tell us whether it recognized deceptive intent or just familiar wording.</p>
 
 <figure>
   <img src="figs/fig1_probe_vs_text.png" alt="Activation probe versus words-only classifier: 0.996 vs 1.000, 0.966 vs 0.998, 0.973 vs 0.992">
   <figcaption>The words-only classifier has no access to the model at all, and still matches or beats the probe on every version.</figcaption>
 </figure>
 
-<div class="callout">
-<b>Why this matters for the headline.</b> If a classifier reading only the text does just as well, then a high probe score is not evidence that the probe found deception inside the model. It may simply be reading how the answer is written.
-</div>
-
-<p>At first, the recorded activity included the instruction itself, such as "answer honestly" or "mislead." This gave the detector a shortcut to the answer. I recorded the activity again without the instruction. The score stayed near-perfect, which prompted the words-only test.</p>
+<p>An early bug also let the detector see instructions such as "answer honestly" or "mislead." I removed those instructions and recorded the activity again. The score stayed near-perfect, which prompted the words-only test. I also fixed a calculation error that made one simple checker flag every response.</p>
 
 <h2>How the project began</h2>
 <p>Ever since reading <em>Generative Agents: Interactive Simulacra of Human Behavior</em>, I have been fascinated by simulations and have spent over a year building them. I loved the idea that you could stare at a screen and watch events unfold between agents, each trying to accomplish something. It felt like watching a sports game: you could follow what everyone was doing, get invested, and have no idea what would happen next.</p>
