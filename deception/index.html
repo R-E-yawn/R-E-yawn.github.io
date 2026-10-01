@@ -60,14 +60,13 @@ a{color:#1552a8}
 /* masthead: title block left, portrait right */
 /* the title takes the width it needs; the portrait centres in whatever is left,
    rather than being pinned to the right edge by space-between */
-/* text starts at the top of the card; the portrait, which is the taller
-   column, stays centred against it */
-.masthead{display:flex; align-items:flex-start; gap:0}
+/* the title block sits centred against the portrait, which is the taller column */
+.masthead{display:flex; align-items:center; gap:0}
 .mh-text{min-width:0; flex:0 0 auto; width:min(100%, 520px)}
 .masthead + h2{margin-top:-22px}
 .mh-text h1{margin-bottom:8px}
 .mh-text .byline{margin-bottom:4px}
-.mh-me{flex:1 1 auto; align-self:center; display:flex; flex-direction:column; align-items:center; gap:11px}
+.mh-me{flex:1 1 auto; display:flex; flex-direction:column; align-items:center; gap:11px}
 .avatar{
   width:176px; height:176px; border-radius:50%; object-fit:cover; display:block;
   border:2px solid var(--ink);
@@ -93,9 +92,11 @@ figure{margin:22px 0 20px; text-align:center}
 .video figcaption{max-width:100%}
 figure img{width:100%; max-width:520px; height:auto; display:block;
   margin:0 auto; border-radius:8px; border:1px solid var(--line)}
-/* the pie is all chart and no padding, so it reads at a small size */
-figure.pie img{max-width:300px; border:0}
-figure.pie figcaption{max-width:430px; text-align:center}
+/* a circle leaves its own whitespace in the corners, so the figure needs far
+   less margin of its own than a rectangular chart does */
+figure.pie{margin:6px 0 10px}
+figure.pie img{max-width:270px; border:0}
+figure.pie figcaption{max-width:430px; text-align:center; margin-top:2px}
 
 /* stated in type, not in a box: body size, bold, in the result colour */
 .finalresult{
@@ -263,7 +264,7 @@ tbody td:not(:first-child){font-weight:600}
 <p>I checked 483 impostor statements against the game records and marked which parts were lies and which were simply deceptive. Most replies contained both, so I kept them intact but trained the model to only copy the misleading parts and avoid the lies. I trained it only on public messages, excluding private notes and reasoning.</p>
 
 <figure class="pie">
-  <img src="figs/fig5_pie.png" alt="Pie chart: 2,089 misleading passages (72%) and 808 outright lies (28%)">
+  <img src="figs/fig5_pie_v2.png" alt="Pie chart: 2,089 misleading passages (72%) and 808 outright lies (28%)">
   <figcaption>Every impostor statement was split into passages. Misleading passages were trained on; lies were penalised.</figcaption>
 </figure>
 
